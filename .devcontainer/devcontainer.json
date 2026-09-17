@@ -1,0 +1,25 @@
+{
+  "name": "BigData Service MCP Server",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "forwardPorts": [8765],
+  "portsAttributes": {
+    "8765": {
+      "label": "bigdata-mcp",
+      "onAutoForward": "openBrowser",
+      "visibility": "public"
+    }
+  },
+  "postCreateCommand": "pip install -r requirements.txt",
+  "remoteEnv": {
+    "FASTMCP_TRANSPORT": "http",
+    "FASTMCP_PORT": "8765"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance"
+      ]
+    }
+  }
+}
