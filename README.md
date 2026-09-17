@@ -24,45 +24,75 @@
 - **入参**: 无
 - **返回**: 服务可用性和统计信息
 
-## 安装
+## 快速部署到 GitHub Codespaces（推荐用于演示）
+
+### 一键启动
+
+1. 点击仓库右上角 **Code** → **Create codespace on main**
+2. 等待环境自动创建（自动安装依赖）
+3. 在终端运行：
+   ```bash
+   python bigdata_service_mcp.py --transport http --port 8765 --host 0.0.0.0
+   ```
+4. 在 **PORTS** 选项卡中将端口设为 **Public**
+
+### 访问地址
+
+启动后访问：`https://<codespace-name>-8765.app.github.dev/mcp`
+
+### 在 Dify 中配置
+
+在 Dify MCP Server 设置中填入上述地址即可。
+
+## 本地运行
+
+### 安装依赖
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## 运行
+### 运行服务
 
 ```bash
-# 方式1：直接运行
+# 方式1：stdio 模式（用于 WorkBuddy MCP 集成）
 python bigdata_service_mcp.py
 
-# 方式2：使用 fastmcp CLI
+# 方式2：HTTP 模式
+python bigdata_service_mcp.py --transport http --port 8765 --host 0.0.0.0
+
+# 方式3：使用 fastmcp CLI
 fastmcp run bigdata_service_mcp.py
-
-# 方式3：作为模块运行
-python -m bigdata_service_mcp
 ```
 
-## WorkBuddy 配置
+## Docker 部署
 
-在 `mcp.json` 中添加：
+### 构建镜像
 
-```json
-{
-  "mcpServers": {
-    "bigdata-service": {
-      "command": "python",
-      "args": ["-m", "bigdata_service_mcp"],
-      "env": {},
-      "disabled": false
-    }
-  }
-}
+```bash
+docker build -t bigdata-service-mcp:latest .
 ```
+
+### 启动容器
+
+```bash
+docker-compose up -d
+```
+
+服务地址：`http://localhost:8765/mcp`
+
+## Dify 平台集成
+
+在 Dify 平台的 **设置** → **MCP Server** 中添加：
+
+| 配置项 | 值 |
+|--------|-----|
+| **名称** | bigdata-service |
+| **URL** | `http://<服务器IP>:8765/mcp` |
 
 ## 使用示例
 
-```
+```python
 # 查询基金对外投资
 query_fund_investments("东方佳康")
 
@@ -105,6 +135,19 @@ def query_company_business_api(credit_code: str):
         timeout=30
     )
     return response.json()
+```
+
+## 项目结构
+
+```
+bigdata-service-mcp-demo/
+├── bigdata_service_mcp.py   # MCP 服务主程序
+├── requirements.txt          # Python 依赖
+├── Dockerfile                # Docker 镜像构建
+├── docker-compose.yml        # Docker Compose 编排
+├── .devcontainer/
+│   └── devcontainer.json     # GitHub Codespaces 配置
+└── README.md
 ```
 
 ## License
